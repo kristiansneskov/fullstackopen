@@ -18,6 +18,7 @@ const History = (props) => {
   )
 }
 
+
 const Button = ({ onClick, text }) => (
   <button onClick={onClick}>
     {text}
