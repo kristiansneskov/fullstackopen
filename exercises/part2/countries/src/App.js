@@ -3,37 +3,53 @@ import axios from 'axios'
 
 const Entry = ({name}) => <li>{name}</li>
 
+const CountryDetail = ({country}) => {
+    return (
+        <div>
+            <h2>{country.name}</h2>
+            <div>
+                <p>capital {country.capital}</p>
+                <p>population {country.population}</p>
+                <div>
+                    <List items={country.languages}/>
+                </div>
+                <div>
+                    <img src={country.flag} alt="flag"/>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+const TooManyHits = ({count}) => (
+    <div>
+        {`Too many matches: ${count}, specify another filter.`}
+    </div>
+)
+
+const List = ({items}) => {
+    return (
+        <ul>
+        {
+            items
+            .map((entry) => <Entry key={entry.name} name={entry.name}/>  )
+        }
+        </ul>
+    )
+}
 const Countries = ({countries, filterValue}) => {
     const matches = countries.filter((entry) => entry.name.toLowerCase().includes(filterValue))
 
     if (matches.length > 10) {
-        return (
-            <div>
-                {`Too many matches, ${matches.length}, specify another filter.`}
-            </div>
-        )
+        return <TooManyHits count={matches.length}/>
     }
-    if (matches.length === 1) {
+    else if (matches.length === 1) {
         const hit = matches[0]
-        return (
-            <div>
-                <h2>{hit.name}</h2>
-                <div>
-                    <p>capital {hit.capital}</p>
-                    <p>population {hit.population}</p>
-                </div>
-            </div>
-        )
+        return <CountryDetail country={hit}/>
     }
-
-    return (
-        <ul>
-        {
-        matches
-        .map((entry) => <Entry key={entry.name} name={entry.name}/>)
-        }
-        </ul>
-    )
+    else {
+        return <List items={matches} />
+    }
 }
 
 const Filter = ({value, onChange}) => (
