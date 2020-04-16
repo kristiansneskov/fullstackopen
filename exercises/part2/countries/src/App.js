@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const Entry = ({name}) => <li>{name}</li>
+const Entry = ({name }) => <li>{name}</li>
 
 const CountryDetail = ({country}) => {
     return (
@@ -27,28 +27,48 @@ const TooManyHits = ({count}) => (
     </div>
 )
 
-const List = ({items}) => {
+const ExpandableList = ({items, onExpansion}) => {
     return (
         <ul>
         {
             items
-            .map((entry) => <Entry key={entry.name} name={entry.name}/>  )
+            .map((entry) => {
+                return (
+                    <li key={entry.name}> 
+                        {entry.name} 
+                        <button onClick={onExpansion} value={entry.name.toLowerCase()}> show</button>
+                    </li>
+                )
+            })
         }
         </ul>
     )
 }
-const Countries = ({countries, filterValue}) => {
-    const matches = countries.filter((entry) => entry.name.toLowerCase().includes(filterValue))
 
+const List = ({items}) => {
+        return (
+            <ul>
+            {
+                items
+                .map((entry) => <Entry key={entry.name} name={entry.name}/>  )
+            }
+            </ul>
+        )
+}
+const Countries = ({countries, filterValue, handleSingleSelection}) => {
+
+    const matches = countries.filter((entry) => entry.name.toLowerCase().includes(filterValue))
+    
+    console.log(matches)
     if (matches.length > 10) {
-        return <TooManyHits count={matches.length}/>
+        return <TooManyHits count={countries.length}/>
     }
     else if (matches.length === 1) {
         const hit = matches[0]
         return <CountryDetail country={hit}/>
     }
     else {
-        return <List items={matches} />
+        return <ExpandableList items={matches} onExpansion={handleSingleSelection}/>
     }
 }
 
@@ -71,9 +91,13 @@ const App = () => {
   }
   useEffect(hook, [])
 
+
   const handleSearch = (event) => {
+    console.log(event.target.value)
     setCountrySearchString(event.target.value)
+    
   }
+
 
   return (
     <div>
@@ -83,7 +107,7 @@ const App = () => {
         onChange={handleSearch}
       />
 
-      <Countries countries={countries} filterValue={countrySearchString}/>
+      <Countries countries={countries} filterValue={countrySearchString} handleSingleSelection={handleSearch}/>
       
     </div>
   )
