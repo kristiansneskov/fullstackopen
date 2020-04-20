@@ -52,7 +52,7 @@ const App = () => {
   useEffect(hook, [])
 
   const handleNameChange = (event) => {
-//    console.log(event.target.value)
+
     setNewName(event.target.value)
   }
   const handleNumberChange = (event) => {
@@ -63,6 +63,7 @@ const App = () => {
   const handleNameFilterChange = (event) => {
     setNewNameFilter(event.target.value)
   }
+
   const addEntry = (event) => {
     event.preventDefault()
     const entry = {
@@ -75,9 +76,14 @@ const App = () => {
       window.alert(`${newName} is already added to phonebook`);
       return
     }
-    setPersons(persons.concat(entry))
-    setNewName('')
-    setNewNumber('')
+
+    axios
+      .post('http://localhost:3001/persons', entry)
+      .then(response => {
+        setPersons(persons.concat(entry))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   return (
